@@ -1,6 +1,7 @@
 package org.bohdan.pet.controllers;
 
-import org.bohdan.pet.dao.AdminDAO;
+import org.bohdan.pet.dao.OwnerDAO;
+import org.bohdan.pet.dao.PetDAO;
 import org.bohdan.pet.models.Owner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,22 +14,28 @@ import javax.validation.Valid;
 @Controller
 public class OwnerController
 {
-    private final AdminDAO adminDAO;
+    private final OwnerDAO ownerDAO;
+    private final PetDAO petDAO;
+
     @Autowired
-    public OwnerController(AdminDAO adminDAO) {this.adminDAO = adminDAO;}
+    public OwnerController(OwnerDAO ownerDAO, PetDAO petDAO)
+    {
+        this.ownerDAO = ownerDAO;
+        this.petDAO = petDAO;
+    }
 
     @GetMapping("/owners")
     public String ownersShow(Model model)
     {
-        model.addAttribute("allOwners", adminDAO.showOwners());
+        model.addAttribute("allOwners", ownerDAO.showOwners());
         return "ownerPages/ownersPage";
     }
 
     @GetMapping("/owners/{id}")
     public String ownerInfo(@PathVariable("id") int id, Model model)
     {
-        model.addAttribute("owner", adminDAO.showOwner(id));
-        model.addAttribute("visit_of_pets", adminDAO.show_PetVisits(id));
+        model.addAttribute("owner", ownerDAO.showOwner(id));
+        model.addAttribute("visit_of_pets", petDAO.show_PetVisits(id));
         return "ownerPages/ownerInfo";
     }
 
@@ -40,7 +47,7 @@ public class OwnerController
     {
         if (bindingResult.hasErrors()) return "ownerPages/newOwner";
 
-        adminDAO.saveOwner(owner);
+        ownerDAO.saveOwner(owner);
 
         return "redirect:/owners";
     }
@@ -48,7 +55,7 @@ public class OwnerController
     @GetMapping("/owners/{id}/edit")
     public String editOwnerPage(@PathVariable("id") int id, @ModelAttribute("owner") Owner owner, Model model)
     {
-        model.addAttribute("owner", adminDAO.showOwner(id));
+        model.addAttribute("owner", ownerDAO.showOwner(id));
         return "ownerPages/editOwnerInfo";
     }
 
@@ -57,7 +64,7 @@ public class OwnerController
     {
         if (bindingResult.hasErrors()) return "ownerPages/editOwnerInfo";
 
-        adminDAO.editInfoOwner(id, owner);
+        ownerDAO.editInfoOwner(id, owner);
 
         return "redirect:/owners/" + id;
     }
@@ -65,7 +72,7 @@ public class OwnerController
     @DeleteMapping("/owners/{id}")
     public String deleteOwner(@PathVariable("id") int id)
     {
-        adminDAO.deleteOwner(id);
+        ownerDAO.deleteOwner(id);
         return "redirect:/owners";
     }
 

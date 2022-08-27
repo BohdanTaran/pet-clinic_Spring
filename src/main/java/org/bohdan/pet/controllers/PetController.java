@@ -1,6 +1,7 @@
 package org.bohdan.pet.controllers;
 
-import org.bohdan.pet.dao.AdminDAO;
+import org.bohdan.pet.dao.OwnerDAO;
+import org.bohdan.pet.dao.PetDAO;
 import org.bohdan.pet.models.Owner;
 import org.bohdan.pet.models.Pet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,21 @@ import javax.validation.Valid;
 @RequestMapping("/owners")
 public class PetController
 {
-    private final AdminDAO adminDAO;
+    private final OwnerDAO ownerDAO;
+    private final PetDAO petDAO;
+
     @Autowired
-    public PetController(AdminDAO adminDAO) {this.adminDAO = adminDAO;}
+    public PetController(OwnerDAO ownerDAO, PetDAO petDAO)
+    {
+        this.ownerDAO = ownerDAO;
+        this.petDAO = petDAO;
+    }
+
 
     @GetMapping("/{id}/newPet")
     public String addPetPage(@PathVariable("id") int id, @ModelAttribute("pet") Pet pet, Model model)
     {
-        model.addAttribute("owner", adminDAO.showOwner(id));
+        model.addAttribute("owner", ownerDAO.showOwner(id));
         return "petPages/newPet";
     }
     @PostMapping("/{id}/newPet")
@@ -32,8 +40,8 @@ public class PetController
     {
         if (bindingResult.hasErrors()) return "petPages/newPet";
 
-        model.addAttribute("owner", adminDAO.showOwner(id));
-        adminDAO.savePet(pet, id);
+        model.addAttribute("owner", ownerDAO.showOwner(id));
+        petDAO.savePet(pet, id);
 
         return "redirect:/owners/" + id;
     }
@@ -42,8 +50,8 @@ public class PetController
     public String editPetPage(@PathVariable("id") int id, @PathVariable("idPet") int idPet,
                               Model model)
     {
-        model.addAttribute("pet", adminDAO.showPet(id, idPet));
-        model.addAttribute("owner", adminDAO.showOwner(id));
+        model.addAttribute("pet", petDAO.showPet(id, idPet));
+        model.addAttribute("owner", ownerDAO.showOwner(id));
         return "petPages/editPet";
     }
 
@@ -54,7 +62,7 @@ public class PetController
     {
         if (bindingResult.hasErrors()) return "petPages/editPet";
 
-        adminDAO.editPet(pet, id, idPet);
+        petDAO.editPet(pet, id, idPet);
 
         return "redirect:/owners/" + id;
     }
@@ -62,7 +70,7 @@ public class PetController
     @DeleteMapping("/{id}/deletePet/{idPet}")
     public String deletePet(@PathVariable("id") int id, @PathVariable("idPet") int idPet)
     {
-        adminDAO.deletePet(id, idPet);
+        petDAO.deletePet(id, idPet);
         return "redirect:/owners/" + id;
     }
 }

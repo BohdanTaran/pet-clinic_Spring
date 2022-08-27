@@ -1,6 +1,6 @@
 package org.bohdan.pet.controllers;
 
-import org.bohdan.pet.dao.AdminDAO;
+import org.bohdan.pet.dao.VeterinarDAO;
 import org.bohdan.pet.models.Veterinar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,14 +13,14 @@ import javax.validation.Valid;
 @Controller
 public class VeterinarController
 {
-    private final AdminDAO adminDAO;
+    private final VeterinarDAO veterinarDAO;
     @Autowired
-    public VeterinarController(AdminDAO adminDAO) {this.adminDAO = adminDAO;}
+    public VeterinarController(VeterinarDAO veterinarDAO) {this.veterinarDAO = veterinarDAO;}
 
     @GetMapping("/veterinarians")
     public String vetShow(Model model)
     {
-        model.addAttribute("allVets", adminDAO.showVets());
+        model.addAttribute("allVets", veterinarDAO.showVets());
         return "veterinarianPages/veterinariansPage";
     }
 
@@ -32,7 +32,7 @@ public class VeterinarController
     {
         if (bindingResult.hasErrors()) return "veterinarianPages/newVet";
 
-        adminDAO.saveVet(veterinar);
+        veterinarDAO.saveVet(veterinar);
 
         return "redirect:/veterinarians";
     }
@@ -40,7 +40,7 @@ public class VeterinarController
     @GetMapping("/veterinarians/edit/{idVet}")
     public String editVetPage(@PathVariable("idVet") int idVet, Model model)
     {
-        model.addAttribute("vet", adminDAO.showVeterinar(idVet));
+        model.addAttribute("vet", veterinarDAO.showVeterinar(idVet));
         return "veterinarianPages/editVet";
     }
     @PatchMapping("/veterinarians/edit/{idVet}")
@@ -50,14 +50,14 @@ public class VeterinarController
     {
         if (bindingResult.hasErrors()) return "veterinarianPages/editVet";
 
-        adminDAO.editVet(veterinar, idVet);
+        veterinarDAO.editVet(veterinar, idVet);
 
         return "redirect:/veterinarians";
     }
     @DeleteMapping("/veterinarians/{idVet}")
     public String delVet(@PathVariable("idVet") int idVet)
     {
-        adminDAO.deleteVet(idVet);
+        veterinarDAO.deleteVet(idVet);
 
         return "redirect:/veterinarians";
     }
