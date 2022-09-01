@@ -9,24 +9,26 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
+@RequestMapping("/veterinarians")
 public class VeterinarController
 {
     private final VeterinarDAO veterinarDAO;
     @Autowired
     public VeterinarController(VeterinarDAO veterinarDAO) {this.veterinarDAO = veterinarDAO;}
 
-    @GetMapping("/veterinarians")
+    @GetMapping()
     public String vetShow(Model model)
     {
         model.addAttribute("allVets", veterinarDAO.showVets());
         return "veterinarianPages/veterinariansPage";
     }
-
-    @GetMapping("/veterinarians/new")
+    
+    @GetMapping("/new")
     public String newVetPage(@ModelAttribute("vet") Veterinar veterinar) { return "veterinarianPages/newVet"; }
-    @PostMapping("/veterinarians/new")
+    @PostMapping("/new")
     public String newVet(@ModelAttribute ("vet") @Valid Veterinar veterinar,
                          BindingResult bindingResult)
     {
@@ -37,13 +39,14 @@ public class VeterinarController
         return "redirect:/veterinarians";
     }
 
-    @GetMapping("/veterinarians/edit/{idVet}")
+    @GetMapping("/edit/{idVet}")
     public String editVetPage(@PathVariable("idVet") int idVet, Model model)
     {
         model.addAttribute("vet", veterinarDAO.showVeterinar(idVet));
         return "veterinarianPages/editVet";
     }
-    @PatchMapping("/veterinarians/edit/{idVet}")
+
+    @PatchMapping("/edit/{idVet}")
     public String editVet(@PathVariable("idVet") int idVet,
                           @ModelAttribute("vet") @Valid Veterinar veterinar,
                           BindingResult bindingResult)
@@ -54,7 +57,7 @@ public class VeterinarController
 
         return "redirect:/veterinarians";
     }
-    @DeleteMapping("/veterinarians/{idVet}")
+    @DeleteMapping("/{idVet}")
     public String delVet(@PathVariable("idVet") int idVet)
     {
         veterinarDAO.deleteVet(idVet);

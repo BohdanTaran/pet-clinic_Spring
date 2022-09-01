@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Controller
+@RequestMapping("/owners")
 public class OwnerController
 {
     private final OwnerDAO ownerDAO;
@@ -24,14 +25,14 @@ public class OwnerController
         this.petDAO = petDAO;
     }
 
-    @GetMapping("/owners")
+    @GetMapping()
     public String ownersShow(Model model)
     {
         model.addAttribute("allOwners", ownerDAO.showOwners());
         return "ownerPages/ownersPage";
     }
 
-    @GetMapping("/owners/{id}")
+    @GetMapping("/{id}")
     public String ownerInfo(@PathVariable("id") int id, Model model)
     {
         model.addAttribute("owner", ownerDAO.showOwner(id));
@@ -39,10 +40,10 @@ public class OwnerController
         return "ownerPages/ownerInfo";
     }
 
-    @GetMapping("/owners/new")
+    @GetMapping("/new")
     public String newOwnerPage(@ModelAttribute("owner") Owner owner) { return "ownerPages/newOwner"; }
 
-    @PostMapping("/owners/new")
+    @PostMapping("/new")
     public String newOwner(@ModelAttribute("owner") @Valid Owner owner, BindingResult bindingResult)
     {
         if (bindingResult.hasErrors()) return "ownerPages/newOwner";
@@ -52,14 +53,14 @@ public class OwnerController
         return "redirect:/owners";
     }
 
-    @GetMapping("/owners/{id}/edit")
+    @GetMapping("/{id}/edit")
     public String editOwnerPage(@PathVariable("id") int id, @ModelAttribute("owner") Owner owner, Model model)
     {
         model.addAttribute("owner", ownerDAO.showOwner(id));
         return "ownerPages/editOwnerInfo";
     }
 
-    @PatchMapping("/owners/{id}/edit")
+    @PatchMapping("/{id}/edit")
     public String editOwner(@PathVariable("id") int id, @ModelAttribute("owner") @Valid Owner owner, BindingResult bindingResult)
     {
         if (bindingResult.hasErrors()) return "ownerPages/editOwnerInfo";
@@ -69,7 +70,7 @@ public class OwnerController
         return "redirect:/owners/" + id;
     }
 
-    @DeleteMapping("/owners/{id}")
+    @DeleteMapping("/{id}")
     public String deleteOwner(@PathVariable("id") int id)
     {
         ownerDAO.deleteOwner(id);

@@ -26,7 +26,6 @@ public class PetController
         this.petDAO = petDAO;
     }
 
-
     @GetMapping("/{id}/newPet")
     public String addPetPage(@PathVariable("id") int id, @ModelAttribute("pet") Pet pet, Model model)
     {
