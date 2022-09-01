@@ -26,13 +26,13 @@ public class PetController
         this.petDAO = petDAO;
     }
 
-    @GetMapping("/{id}/newPet")
+    @RequestMapping(value = "/{id}/newPet", method = RequestMethod.GET)
     public String addPetPage(@PathVariable("id") int id, @ModelAttribute("pet") Pet pet, Model model)
     {
         model.addAttribute("owner", ownerDAO.showOwner(id));
         return "petPages/newPet";
     }
-    @PostMapping("/{id}/newPet")
+    @RequestMapping(value = "/{id}/newPet", method = RequestMethod.POST)
     public String addPet(@PathVariable("id") int id,
                          @ModelAttribute("owner") Owner owner, @ModelAttribute("pet") @Valid Pet pet,
                          BindingResult bindingResult, Model model)
@@ -45,7 +45,7 @@ public class PetController
         return "redirect:/owners/" + id;
     }
 
-    @GetMapping("/{id}/editPet/{idPet}")
+    @RequestMapping(value = "/{id}/editPet/{idPet}", method = RequestMethod.GET)
     public String editPetPage(@PathVariable("id") int id, @PathVariable("idPet") int idPet,
                               Model model)
     {
@@ -54,7 +54,7 @@ public class PetController
         return "petPages/editPet";
     }
 
-    @PatchMapping("/{id}/editPet/{idPet}")
+    @RequestMapping(value = "/{id}/editPet/{idPet}", method = RequestMethod.PATCH)
     public String editPet(@PathVariable("id") int id, @PathVariable("idPet") int idPet,
                           @ModelAttribute("owner") Owner owner, @ModelAttribute("pet") @Valid Pet pet,
                           BindingResult bindingResult)
@@ -66,7 +66,7 @@ public class PetController
         return "redirect:/owners/" + id;
     }
 
-    @DeleteMapping("/{id}/deletePet/{idPet}")
+    @RequestMapping(value = "/{id}/deletePet/{idPet}", method = RequestMethod.DELETE)
     public String deletePet(@PathVariable("id") int id, @PathVariable("idPet") int idPet)
     {
         petDAO.deletePet(id, idPet);

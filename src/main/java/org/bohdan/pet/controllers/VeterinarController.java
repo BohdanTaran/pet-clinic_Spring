@@ -19,16 +19,16 @@ public class VeterinarController
     @Autowired
     public VeterinarController(VeterinarDAO veterinarDAO) {this.veterinarDAO = veterinarDAO;}
 
-    @GetMapping()
+    @RequestMapping(method = RequestMethod.GET)
     public String vetShow(Model model)
     {
         model.addAttribute("allVets", veterinarDAO.showVets());
         return "veterinarianPages/veterinariansPage";
     }
-    
-    @GetMapping("/new")
+
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newVetPage(@ModelAttribute("vet") Veterinar veterinar) { return "veterinarianPages/newVet"; }
-    @PostMapping("/new")
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String newVet(@ModelAttribute ("vet") @Valid Veterinar veterinar,
                          BindingResult bindingResult)
     {
@@ -39,14 +39,14 @@ public class VeterinarController
         return "redirect:/veterinarians";
     }
 
-    @GetMapping("/edit/{idVet}")
+    @RequestMapping(value = "/edit/{idVet}", method = RequestMethod.GET)
     public String editVetPage(@PathVariable("idVet") int idVet, Model model)
     {
         model.addAttribute("vet", veterinarDAO.showVeterinar(idVet));
         return "veterinarianPages/editVet";
     }
 
-    @PatchMapping("/edit/{idVet}")
+    @RequestMapping(value = "/edit/{idVet}", method = RequestMethod.PATCH)
     public String editVet(@PathVariable("idVet") int idVet,
                           @ModelAttribute("vet") @Valid Veterinar veterinar,
                           BindingResult bindingResult)
@@ -57,7 +57,8 @@ public class VeterinarController
 
         return "redirect:/veterinarians";
     }
-    @DeleteMapping("/{idVet}")
+
+    @RequestMapping(value = "/{idVet}", method = RequestMethod.DELETE)
     public String delVet(@PathVariable("idVet") int idVet)
     {
         veterinarDAO.deleteVet(idVet);
